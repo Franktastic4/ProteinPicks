@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/Users/Franktastin4/Google Drive/JavaWorkspace/lib/opencsv-3.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Franktastin4/Google Drive/JavaWorkspace/lib/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="/Users/Franktastin4/Google Drive/JavaWorkspace/lib/derby.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
