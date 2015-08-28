@@ -6,22 +6,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
 public class MainFrame extends JFrame {
 
 	private MainPanel mainPanel;
-	Main myMain;
+	private DisplayPanel displayPanel;
+	private JScrollPane tableContainer;
+	Container container = getContentPane();
 	
-	private void hashSearch(String searchTextField){
+	private Food hashSearch(String searchTextField){
 		
-		Food foodTempt = (Food) Main.mHashMap.get(searchTextField.hashCode());
+		Food foodTemp = (Food) Main.mHashMap.get(searchTextField.hashCode());
 		System.out.println("Searched for: "+ searchTextField);
-		System.out.println("Results: " + 
-				foodTempt.returnName() 
-		);
-		
+		System.out.println("Results: " +  foodTemp.returnName());
+		return foodTemp;
 	}
 	
 	// Constructor
@@ -35,6 +36,8 @@ public class MainFrame extends JFrame {
 		// Create components
 		// mainPanel is the panel on the left where I append the buttons and text fields
 		mainPanel = new MainPanel();
+		displayPanel = new DisplayPanel(null);
+		tableContainer = new JScrollPane(displayPanel);
 		
 		// We're creating a listener to detect events in our panel.
 		// Only have one button so I don't check for which event
@@ -54,17 +57,31 @@ public class MainFrame extends JFrame {
 				// Send back to main to search?
 				System.out.println(searchTextField);
 				
-				// Call a method that access Main's public hashmap, and Tree
-				hashSearch(searchTextField);
 				
+				// If I save the old table in the tableContainer
+				// I can save the contents, add
+				// Remove the current
+				// Add the updated one
+				
+				//Remove previous table container, last problem was that I had it after I redefined tableContainers
+				container.remove(tableContainer);
+				
+				// Call a method that access Main's public hashmap, and Tree
+				displayPanel = new DisplayPanel(hashSearch(searchTextField));
+				tableContainer = new JScrollPane(displayPanel);	
+				container.add(tableContainer, BorderLayout.EAST);
+				revalidate();
+				repaint();
 				
 			}
 			
 		});
 	
-		// Add the panel on the west/left side of the GUI
-	   Container container = getContentPane();
-	   container.add(mainPanel, BorderLayout.WEST);
+		// Add the panel on the west/left side of the GUI		
+	    container.add(mainPanel, BorderLayout.WEST);
+	   
+	    //tableContainer (ScrollPane Object) should provide the header. We added it when we put the table in it.
+	    container.add(tableContainer, BorderLayout.EAST);
 	   
 	   
 	   

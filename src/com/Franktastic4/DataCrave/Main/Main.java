@@ -228,15 +228,15 @@ public class Main {
     			// A collision is when two unique keys hash to the same spot (bucket)
     			if(!hashmapUSDA.containsKey(food.returnName().hashCode())){
     				hashmapUSDA.put(food.returnName().hashCode(), food);
-    				anotherCounter++;
+    				//anotherCounter++;
     			}
 
     		 			
     		}
     	
     		
-    		System.out.println("Hashmap buillt, counter is: " + anotherCounter);
-    		System.out.println("Hashmap buillt, size is: " + hashmapUSDA.size());
+    		//System.out.println("Hashmap buillt, counter is: " + anotherCounter);
+    		//System.out.println("Hashmap buillt, size is: " + hashmapUSDA.size());
     		return hashmapUSDA;
     		
     	}catch(SQLException e){
@@ -263,10 +263,8 @@ public class Main {
 				
 				// The MainFrame is the "controller" that tells each button what to do instead of the 
 				// buttons/objects calling each other.
-				JFrame frame = new MainFrame("ProteinPicks");	
-				frame.setSize(400, 250);
-				
-				// Can I try to add a listener to the frame?
+				JFrame frame = new MainFrame("ProteinPicks");
+				frame.setSize(800, 250);
 				
 				// sets the x button to exit the program when the x is clicked
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

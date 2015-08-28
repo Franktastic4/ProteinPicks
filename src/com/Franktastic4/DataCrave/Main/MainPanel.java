@@ -73,7 +73,6 @@ public class MainPanel extends JPanel {
 		gc.gridy = 1;
 		add(searchButton, gc);
 		
-		
 	}
 	
 	public void fireMainPanelEvent(MainPanelEvent event){
