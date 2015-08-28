@@ -12,6 +12,17 @@ import javax.swing.JTextArea;
 public class MainFrame extends JFrame {
 
 	private MainPanel mainPanel;
+	Main myMain;
+	
+	private void hashSearch(String searchTextField){
+		
+		Food foodTempt = (Food) Main.mHashMap.get(searchTextField.hashCode());
+		System.out.println("Searched for: "+ searchTextField);
+		System.out.println("Results: " + 
+				foodTempt.returnName() 
+		);
+		
+	}
 	
 	// Constructor
 	public MainFrame(String title){
@@ -42,6 +53,11 @@ public class MainFrame extends JFrame {
 				
 				// Send back to main to search?
 				System.out.println(searchTextField);
+				
+				// Call a method that access Main's public hashmap, and Tree
+				hashSearch(searchTextField);
+				
+				
 			}
 			
 		});
