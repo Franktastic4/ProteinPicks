@@ -4,11 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
+import javax.swing.JViewport;
 
 public class MainFrame extends JFrame {
 
@@ -19,10 +23,19 @@ public class MainFrame extends JFrame {
 	
 	private Food hashSearch(String searchTextField){
 		
-		Food foodTemp = (Food) Main.mHashMap.get(searchTextField.hashCode());
-		System.out.println("Searched for: "+ searchTextField);
-		System.out.println("Results: " +  foodTemp.returnName());
+		Food foodTemp = (Food) Main.mHashMap.get(searchTextField.toLowerCase().hashCode());
+		//System.out.println("Searched for: "+ searchTextField);
+		//System.out.println("Results: " +  foodTemp.returnName());
 		return foodTemp;
+	}
+	
+	private void offerSuggestions(ArrayList searchSuggestionsArrayList){
+		
+		JFrame frame = new SuggestionFrame("Suggestions", searchSuggestionsArrayList);
+		frame.setSize(200, 400);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		frame.setVisible(true);
+		
 	}
 	
 	// Constructor
@@ -35,8 +48,9 @@ public class MainFrame extends JFrame {
 	
 		// Create components
 		// mainPanel is the panel on the left where I append the buttons and text fields
+		// displayPanel is the panel we view, inside a scroll-able pane
 		mainPanel = new MainPanel();
-		displayPanel = new DisplayPanel(null);
+		displayPanel = new DisplayPanel(null,null);
 		tableContainer = new JScrollPane(displayPanel);
 		
 		// We're creating a listener to detect events in our panel.
@@ -54,25 +68,53 @@ public class MainFrame extends JFrame {
 				// Get the text that comes back
 				String searchTextField = event.getText();
 				
-				// Send back to main to search?
-				System.out.println(searchTextField);
-				
-				
-				// If I save the old table in the tableContainer
-				// I can save the contents, add
-				// Remove the current
-				// Add the updated one
-				
-				//Remove previous table container, last problem was that I had it after I redefined tableContainers
+				// Remove old view
 				container.remove(tableContainer);
 				
-				// Call a method that access Main's public hashmap, and Tree
-				displayPanel = new DisplayPanel(hashSearch(searchTextField));
+				// If Clearing, make a clean displayPanel
+				if(event.getText().equals("CLEAR")){
+					displayPanel = new DisplayPanel(null,null);
+	
+				}else{
+				// Else we're updating a screen
+					
+					// Check for existing table
+					JViewport viewport = tableContainer.getViewport(); 
+					JTable oldTable = (JTable) ((DisplayPanel) viewport.getView()).returnJTable();
+							
+					// Call a method that access Main's public hashmap, and Tree
+					
+					// SEARCH SUGGESTION
+					if(hashSearch(searchTextField) == null){
+						// Offer search suggestions
+						System.out.println("No results for " + searchTextField);
+						ArrayList searchSuggestions = (ArrayList<String>) Main.mSearchSugguestions.get( Main.returnKeyWord(searchTextField).toLowerCase().hashCode());
+						if(searchSuggestions != null){
+							// There exists search sugguestions
+							offerSuggestions(searchSuggestions);
+
+							//System.out.println("Did you mean: ");
+							//for(int index = 0; index < searchSuggestions.size(); index++){
+							//	System.out.println(searchSuggestions.get(index));
+							//}
+							
+						}else{
+							System.out.println("No suggestions");
+							
+						}
+		
+					}
+					// Set a new value for searchTextField if there are suggestions
+					displayPanel = new DisplayPanel(hashSearch(searchTextField), oldTable);
+				}
+				
+				
 				tableContainer = new JScrollPane(displayPanel);	
 				container.add(tableContainer, BorderLayout.EAST);
-				revalidate();
-				repaint();
 				
+				// Refresh the FRAME
+				revalidate();
+				repaint();		
 			}
 			
 		});

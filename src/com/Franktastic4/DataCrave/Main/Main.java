@@ -13,13 +13,16 @@ import javax.swing.SwingUtilities;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 public class Main {
 
 	private ActionListener searchButtonListener;
 	static HashMap mHashMap;
+	static HashMap mSearchSugguestions;
 
 	public static void SelectDatabase(){
 		
@@ -149,7 +152,7 @@ public class Main {
  	    	  statement.executeUpdate(sql);
  	    	  counter++;
  	    	  
- 	    	  if(counter%100 == 1){
+ 	    	  if(counter%100 == 0){
  	    		  System.out.println("Inserted: " + counter);
  	    	  }
  	    	  
@@ -227,8 +230,7 @@ public class Main {
     			// It will replace the older one. That is not a collision
     			// A collision is when two unique keys hash to the same spot (bucket)
     			if(!hashmapUSDA.containsKey(food.returnName().hashCode())){
-    				hashmapUSDA.put(food.returnName().hashCode(), food);
-    				//anotherCounter++;
+    				hashmapUSDA.put(food.returnName().toLowerCase().hashCode(), food);
     			}
 
     		 			
@@ -248,13 +250,69 @@ public class Main {
     	
     }
     
+    public static String returnKeyWord(String fullName){
+    
+    	// Has two delimiters " " and ","
+    	StringTokenizer st = new StringTokenizer(fullName, ", ");
+    	
+    	return st.nextToken();
+    }
+    
+    public static HashMap<Integer, ArrayList<String>> buildSearchSuggestions(){
+    	
+    	// Hash map of just Names and description, Key is the name. Should make it all lower case before we hash it 
+    	
+    	try{
+    		
+    		System.out.println("Connecting to database to build search suggestions.");
+		    Connection databaseConnection = DriverManager.getConnection(NutritionTableDbHelper.DB_URL,
+		    		NutritionTableDbHelper.USER, NutritionTableDbHelper.PASS);
+    		Statement statement = databaseConnection.createStatement();
+    		
+    		String query = "SELECT " + 
+    		NutritionTableDbHelper.NAME +
+    		" FROM " +  NutritionTableDbHelper.TABLE_NAME; 
+    		
+    		ResultSet results = statement.executeQuery(query);
+    		HashMap<Integer, ArrayList<String>> searchSuggestionTable = new HashMap<Integer, ArrayList<String>>();
+    		
+    		while(results.next()){
+    			
+    			// Parse string for the actual food in lower case
+    			String keyWord =  returnKeyWord(results.getString(NutritionTableDbHelper.NAME)).toLowerCase();
+ 
+    			// Hash it, and add to list (check if exists?) -- Should I just create nodes that point next -> and a head/tail?
+    			if(searchSuggestionTable.get(keyWord.hashCode()) == null){
+    				// Create List
+    				//System.out.println("List started for items: " + keyWord);
+    				ArrayList<String> searchSuggestionList = new ArrayList<String>();
+    				searchSuggestionList.add(results.getString(NutritionTableDbHelper.NAME).toLowerCase());
+    				searchSuggestionTable.put(keyWord.hashCode(), searchSuggestionList);
+    			}else{
+    				searchSuggestionTable.get(keyWord.hashCode()).add(results.getString(NutritionTableDbHelper.NAME).toLowerCase());
+    			}
+    			
+    		}
+    	
+    		return searchSuggestionTable;
+    		
+    	}catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    	
+    	return null;
+ 
+    }
+    
     public static void main(String[] args){
     	
 		// The database closes the connection at the end of SelectDatabase? Doesn't seem to return.
 		SelectDatabase();
 			
-		// Create Hashtable and Tree
+		// Create both are hashmaps
 		mHashMap = buildHashmap();
+		mSearchSugguestions = buildSearchSuggestions();
+		
 			
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run(){

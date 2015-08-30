@@ -45,6 +45,20 @@ public class MainPanel extends JPanel {
 			
 		});
 		
+		JButton clearButton = new JButton("Clear History");
+		clearButton.addActionListener(new ActionListener(){
+			
+			public void actionPerformed(ActionEvent e){
+				
+				// Now I want to pass some information along
+				String searchFieldTextFinal = "CLEAR";
+				fireMainPanelEvent(new MainPanelEvent(this,searchFieldTextFinal));
+				
+			}
+			
+		});
+		
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 		// Splits my grid into sections.
@@ -59,9 +73,6 @@ public class MainPanel extends JPanel {
 		gc.gridy = 0;
 		add(searchLabel, gc);
 		
-		// Moving one COLUMN over
-		// STarts the label at the start of next column
-		// Second Column
 		gc.anchor = GridBagConstraints.LINE_END;
 		gc.gridx = 0;
 		gc.gridy = 0;
@@ -72,6 +83,14 @@ public class MainPanel extends JPanel {
 		gc.gridx = 0;
 		gc.gridy = 1;
 		add(searchButton, gc);
+		
+		gc.anchor = GridBagConstraints.FIRST_LINE_END;
+		gc.weighty = 10;
+		gc.gridx = 0;
+		gc.gridy = 1;
+		add(clearButton, gc);
+		
+		
 		
 	}
 	
@@ -97,3 +116,4 @@ public class MainPanel extends JPanel {
 		listenerList.remove(MainPanelListener.class, listener);
 	} 
 }
+
