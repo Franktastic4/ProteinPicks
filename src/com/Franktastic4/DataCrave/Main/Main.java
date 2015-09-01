@@ -38,6 +38,7 @@ public class Main {
 		    databaseConnection = DriverManager.getConnection(NutritionTableDbHelper.DB_URL,
 		    		NutritionTableDbHelper.USER, NutritionTableDbHelper.PASS);
 		    
+		    databaseConnection.setAutoCommit (false);
 		    //dropTable(databaseConnection);
 		    
 		    // Check if table exists
@@ -160,6 +161,7 @@ public class Main {
  	    	  nextLine = reader.readNext();
  	       }
  
+ 	      databaseConnection.commit();
  	      System.out.println("Database has been loaded");
  	 	  reader.close();
  	 	  statement.close();
